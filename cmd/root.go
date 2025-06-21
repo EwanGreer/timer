@@ -4,11 +4,11 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-	"log"
 	"os"
 
 	"github.com/EwanGreer/timer-cli/internal/commands"
+	"github.com/EwanGreer/timer-cli/internal/deps"
+	"github.com/EwanGreer/timer-cli/internal/repository"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -20,11 +20,11 @@ var rootCmd = &cobra.Command{
 	Use:   "timer",
 	Short: "",
 	Long:  ``,
-	Run:   commands.List(), // TODO: timer list
+	Run:   commands.List(deps.Dependencies.DB),
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		log.Println("PRECMD")
+		deps.NewDeps(repository.NewSqliteDatabase(viper.GetString("db.path")))
 		return nil
-	}, // TODO: db connection
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -68,7 +68,7 @@ func initConfig() {
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		panic(err)
 	}
 }

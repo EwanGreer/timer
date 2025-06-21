@@ -1,4 +1,5 @@
 [env]
+ENV = "development"
 BIN_NAME = "timer"
 CONFIG_PATH = "./test/data/config.toml"
 
