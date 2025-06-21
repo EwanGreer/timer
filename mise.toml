@@ -1,0 +1,14 @@
+[env]
+BIN_NAME = "timer"
+
+[tools]
+
+[tasks]
+[tasks.build]
+description = "build executable"
+run = 'go build -o ./bin/$BIN_NAME .'
+
+[tasks.run]
+description = "run the executable"
+depends = ["build"]
+run = "./bin/$BIN_NAME"
