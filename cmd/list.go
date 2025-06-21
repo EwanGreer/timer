@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"github.com/EwanGreer/timer-cli/internal/commands"
-	"github.com/EwanGreer/timer-cli/internal/repository"
+	"github.com/EwanGreer/timer-cli/internal/deps"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +19,7 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: commands.List(repository.NewSqliteDatabase("test/data/local.db")),
+	Run: commands.List(deps.GetDeps),
 }
 
 func init() {

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/EwanGreer/timer-cli/internal/models"
+	"github.com/spf13/cobra"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -17,20 +18,15 @@ func NewSqliteDatabase(path string) *SQLiteDatabase {
 		return nil
 	}
 
+	DB.AutoMigrate(&models.Timer{})
+
 	return &SQLiteDatabase{DB: DB}
 }
 
 func (s *SQLiteDatabase) GetAll() ([]models.Timer, error) {
-	items := []models.Timer{
-		{
-			Model: gorm.Model{ID: 1},
-			Name:  "Item 1",
-		},
-		{
-			Model: gorm.Model{ID: 2},
-			Name:  "",
-		},
-	}
+	items := []models.Timer{}
+	tx := s.Find(&items)
+	cobra.CheckErr(tx.Error)
 
 	return items, nil
 }

@@ -1,15 +1,21 @@
 package deps
 
-import "github.com/EwanGreer/timer-cli/internal/repository"
+import (
+	"github.com/EwanGreer/timer-cli/internal/repository"
+)
 
-var Dependencies = &Deps{}
+var dependencies = &Deps{}
 
 type Deps struct {
 	DB *repository.SQLiteDatabase
 }
 
 func NewDeps(DB *repository.SQLiteDatabase) {
-	Dependencies = &Deps{
+	dependencies = &Deps{
 		DB: DB,
 	}
+}
+
+func GetDeps() *Deps {
+	return dependencies
 }

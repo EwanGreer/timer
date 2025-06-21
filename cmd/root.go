@@ -20,9 +20,10 @@ var rootCmd = &cobra.Command{
 	Use:   "timer",
 	Short: "",
 	Long:  ``,
-	Run:   commands.List(deps.Dependencies.DB),
+	Run:   commands.List(deps.GetDeps),
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		deps.NewDeps(repository.NewSqliteDatabase(viper.GetString("db.path")))
+
 		return nil
 	},
 }
