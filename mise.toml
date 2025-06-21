@@ -1,5 +1,6 @@
 [env]
 BIN_NAME = "timer"
+CONFIG_PATH = "./test/data/config.toml"
 
 [settings]
 experimental = true
@@ -15,4 +16,4 @@ run = 'go build -o ./bin/$BIN_NAME .'
 [tasks.run]
 description = "run the executable"
 depends = ["build"]
-run = "./bin/$BIN_NAME"
+run = "./bin/$BIN_NAME -c $CONFIG_PATH"
