@@ -1,7 +1,11 @@
 [env]
 BIN_NAME = "timer"
 
+[settings]
+experimental = true
+
 [tools]
+"go:github.com/spf13/cobra-cli" = "latest"
 
 [tasks]
 [tasks.build]
