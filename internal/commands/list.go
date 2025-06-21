@@ -1,9 +1,15 @@
 package commands
 
-import "github.com/spf13/cobra"
+import (
+	"log"
+
+	"github.com/spf13/cobra"
+)
 
 type CobraCmdFunc = func(cmd *cobra.Command, args []string)
 
 func List() CobraCmdFunc {
-	return func(cmd *cobra.Command, args []string) {}
+	return func(cmd *cobra.Command, args []string) {
+		log.Println("LIST")
+	}
 }

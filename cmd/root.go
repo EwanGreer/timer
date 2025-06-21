@@ -5,8 +5,10 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/EwanGreer/timer-cli/internal/commands"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -15,11 +17,14 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "timer",
-	Short:   "",
-	Long:    ``,
-	Run:     func(cmd *cobra.Command, args []string) {},                   // TODO: timer list
-	PreRunE: func(cmd *cobra.Command, args []string) error { return nil }, // TODO: db connection
+	Use:   "timer",
+	Short: "",
+	Long:  ``,
+	Run:   commands.List(), // TODO: timer list
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		log.Println("PRECMD")
+		return nil
+	}, // TODO: db connection
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
