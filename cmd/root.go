@@ -4,11 +4,13 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"os"
 
 	"github.com/EwanGreer/timer-cli/internal/commands"
 	"github.com/EwanGreer/timer-cli/internal/deps"
 	"github.com/EwanGreer/timer-cli/internal/repository"
+	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -31,10 +33,13 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	if err := fang.Execute(context.Background(), rootCmd); err != nil {
 		os.Exit(1)
 	}
+	// err := rootCmd.Execute()
+	// if err != nil {
+	// 	os.Exit(1)
+	// }
 }
 
 func init() {
