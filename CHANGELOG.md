@@ -1,3 +1,9 @@
+## 0.3.0 (2025-06-24)
+
+### Feat
+
+- add text color when timer is less than 1 min
+
 ## 0.2.0 (2025-06-24)
 
 ### Feat
