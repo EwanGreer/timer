@@ -61,16 +61,28 @@ var doneArt = `
 func (m Model) View() string {
 	if m.done {
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
-			lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("10")).Render(doneArt),
+			lipgloss.NewStyle().
+				Bold(true).
+				Foreground(lipgloss.Color("10")). // green DONE!
+				Render(doneArt),
 		)
 	}
 
 	mins := int(m.Remaining.Minutes())
 	secs := int(m.Remaining.Seconds()) % 60
 	timeStr := fmt.Sprintf("%02d:%02d", mins, secs)
-	big := renderBigClock(timeStr)
 
-	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, big)
+	bigStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("12")). // pink (ANSI color 13)
+		Render(renderBigClock(timeStr))
+
+	if m.Remaining < time.Second*60 {
+		bigStyle = lipgloss.NewStyle().
+			Foreground(lipgloss.Color("13")). // pink (ANSI color 13)
+			Render(renderBigClock(timeStr))
+	}
+
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, bigStyle)
 }
 
 type tickMsg time.Time
