@@ -7,7 +7,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/EwanGreer/timer-cli/cmd"
+	"github.com/EwanGreer/timer/cmd"
 )
 
 func main() {

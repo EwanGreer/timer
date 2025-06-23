@@ -6,7 +6,7 @@ package cmd
 import (
 	"time"
 
-	"github.com/EwanGreer/timer-cli/internal/commands"
+	"github.com/EwanGreer/timer/internal/commands"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 )

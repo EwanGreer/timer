@@ -1,4 +1,4 @@
-module github.com/EwanGreer/timer-cli
+module github.com/EwanGreer/timer
 
 go 1.24.3
 
