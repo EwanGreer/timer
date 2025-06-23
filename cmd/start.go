@@ -4,6 +4,9 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"time"
+
+	"github.com/EwanGreer/timer-cli/internal/commands"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 )
@@ -13,8 +16,15 @@ var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start a timer",
 	Long:  `Starts an on screen timer`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		if _, err := tea.NewProgram(nil, tea.WithAltScreen()).Run(); err != nil {
+		durationStr := args[0]
+		duration, err := time.ParseDuration(durationStr)
+		if err != nil {
+			panic(err)
+		}
+
+		if _, err := tea.NewProgram(commands.Model{Remaining: duration}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
 	},

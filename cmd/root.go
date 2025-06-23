@@ -6,7 +6,10 @@ package cmd
 import (
 	"context"
 	"os"
+	"time"
 
+	"github.com/EwanGreer/timer-cli/internal/commands"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -19,7 +22,18 @@ var rootCmd = &cobra.Command{
 	Use:   "timer",
 	Short: "",
 	Long:  ``,
-	Run:   nil,
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		durationStr := args[0]
+		duration, err := time.ParseDuration(durationStr)
+		if err != nil {
+			panic(err)
+		}
+
+		if _, err := tea.NewProgram(commands.Model{Remaining: duration}, tea.WithAltScreen()).Run(); err != nil {
+			panic(err)
+		}
+	},
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		return nil
 	},
