@@ -4,7 +4,8 @@ A simple timer.
 
 ## Installation
 
-[!NOTE] Must create an empty `~/.timer.toml` file before running or the application will panic.
+> [!NOTE]
+> Must create an empty `~/.timer.toml` file before running or the application will panic.
 
 `go install github.com/EwanGreer/timer@$version`
 
