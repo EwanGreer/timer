@@ -6,13 +6,14 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/spf13/cobra"
 )
 
-type CobraCmdFunc func(cmd *cobra.Command, args []string)
+type tickMsg time.Time
 
-func Start() CobraCmdFunc {
-	return func(cmd *cobra.Command, args []string) {}
+func tick() tea.Cmd {
+	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
 }
 
 type Model struct {
@@ -50,20 +51,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-var doneArt = `
-██████   ██████  ███    ██ ███████ 
-██   ██ ██    ██ ████   ██ ██      
-██   ██ ██    ██ ██ ██  ██ █████   
-██   ██ ██    ██ ██  ██ ██ ██      
-██████   ██████  ██   ████ ███████ 
-`
-
 func (m Model) View() string {
 	if m.done {
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
 			lipgloss.NewStyle().
 				Bold(true).
-				Foreground(lipgloss.Color("10")). // green DONE!
+				Foreground(lipgloss.Color("10")).
 				Render(doneArt),
 		)
 	}
@@ -73,22 +66,14 @@ func (m Model) View() string {
 	timeStr := fmt.Sprintf("%02d:%02d", mins, secs)
 
 	bigStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("12")). // pink (ANSI color 13)
+		Foreground(lipgloss.Color("12")).
 		Render(renderBigClock(timeStr))
 
 	if m.Remaining < time.Second*60 {
 		bigStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("13")). // pink (ANSI color 13)
+			Foreground(lipgloss.Color("13")).
 			Render(renderBigClock(timeStr))
 	}
 
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, bigStyle)
-}
-
-type tickMsg time.Time
-
-func tick() tea.Cmd {
-	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
-		return tickMsg(t)
-	})
 }
