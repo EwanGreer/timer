@@ -7,9 +7,6 @@ import (
 	"context"
 	"os"
 
-	"github.com/EwanGreer/timer-cli/internal/commands"
-	"github.com/EwanGreer/timer-cli/internal/deps"
-	"github.com/EwanGreer/timer-cli/internal/repository"
 	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -22,10 +19,8 @@ var rootCmd = &cobra.Command{
 	Use:   "timer",
 	Short: "",
 	Long:  ``,
-	Run:   commands.List(deps.GetDeps),
+	Run:   nil,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		deps.NewDeps(repository.NewSqliteDatabase(viper.GetString("db.path")))
-
 		return nil
 	},
 }
