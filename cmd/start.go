@@ -1,27 +1,22 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
-	"fmt"
-
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
 )
 
 // startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Start a timer",
+	Long:  `Starts an on screen timer`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("start called")
+		if _, err := tea.NewProgram(nil, tea.WithAltScreen()).Run(); err != nil {
+			panic(err)
+		}
 	},
 }
 
