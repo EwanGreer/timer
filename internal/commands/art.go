@@ -2,6 +2,14 @@ package commands
 
 import "strings"
 
+const doneArt = `
+██████   ██████  ███    ██ ███████ 
+██   ██ ██    ██ ████   ██ ██      
+██   ██ ██    ██ ██ ██  ██ █████   
+██   ██ ██    ██ ██  ██ ██ ██      
+██████   ██████  ██   ████ ███████ 
+`
+
 var bigDigits = map[rune]string{
 	'0': `
  ███ 
