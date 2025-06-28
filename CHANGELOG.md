@@ -31,3 +31,28 @@
 - init commands
 - init mise
 - init cobra
+
+## v0.5.0 (2025-06-28)
+
+### Feat
+
+- stopwatch
+- readme
+- add text color when timer is less than 1 min
+- update install name
+- make work
+- more cleanup + init tea
+- remove list command
+- test fang
+- init better
+- init deps pattern
+- init config
+- init viper
+- init commands
+- init mise
+- init cobra
+
+### Fix
+
+- ux plus docs
+- help docs
