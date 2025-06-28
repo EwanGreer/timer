@@ -16,7 +16,7 @@ func tick() tea.Cmd {
 	})
 }
 
-type Model struct {
+type StartModel struct {
 	Remaining time.Duration
 	width     int
 	height    int
@@ -24,11 +24,11 @@ type Model struct {
 	done      bool
 }
 
-func (m Model) Init() tea.Cmd {
+func (m StartModel) Init() tea.Cmd {
 	return tick()
 }
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m StartModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -51,7 +51,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m Model) View() string {
+func (m StartModel) View() string {
 	if m.done {
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
 			lipgloss.NewStyle().
