@@ -19,10 +19,11 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "timer",
-	Short: "",
-	Long:  ``,
-	Args:  cobra.ExactArgs(1),
+	Use:     "timer",
+	Short:   "start a timer",
+	Long:    `start a timer of a set duration of hours, minutes and seconds`,
+	Example: "timer start (10h30m10s|10h30m|10h|30m|10s)",
+	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		durationStr := args[0]
 		duration, err := time.ParseDuration(durationStr)
@@ -34,9 +35,6 @@ var rootCmd = &cobra.Command{
 			panic(err)
 		}
 	},
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		return nil
-	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -45,10 +43,6 @@ func Execute() {
 	if err := fang.Execute(context.Background(), rootCmd); err != nil {
 		os.Exit(1)
 	}
-	// err := rootCmd.Execute()
-	// if err != nil {
-	// 	os.Exit(1)
-	// }
 }
 
 func init() {
@@ -59,22 +53,18 @@ func init() {
 
 func initConfig() {
 	if cfgFile != "" {
-		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".test" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigType("toml")
 		viper.SetConfigName(".timer.toml")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv()
 
-	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
 	}
