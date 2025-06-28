@@ -17,7 +17,6 @@ type StopWatchModel struct {
 }
 
 func (m StopWatchModel) Init() tea.Cmd {
-	m.StartTime = time.Now()
 	return tick()
 }
 

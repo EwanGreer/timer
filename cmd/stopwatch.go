@@ -9,9 +9,12 @@ import (
 )
 
 var stopwatchCmd = &cobra.Command{
-	Use:   "stopwatch",
-	Short: "",
-	Long:  ``,
+	Use:     "stopwatch",
+	Short:   "start a stopwatch",
+	Long:    `starts a stopwatch`,
+	Example: "timer stopwatch",
+	Aliases: []string{"sw"},
+	Args:    cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		if _, err := tea.NewProgram(commands.StopWatchModel{StartTime: time.Now()}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
