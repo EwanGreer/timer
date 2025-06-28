@@ -1,3 +1,14 @@
+## 0.5.0 (2025-06-28)
+
+### Feat
+
+- stopwatch
+
+### Fix
+
+- ux plus docs
+- help docs
+
 ## 0.4.0 (2025-06-26)
 
 ### Feat
