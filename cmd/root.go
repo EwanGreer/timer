@@ -31,7 +31,7 @@ var rootCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if _, err := tea.NewProgram(commands.Model{Remaining: duration}, tea.WithAltScreen()).Run(); err != nil {
+		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
 	},
