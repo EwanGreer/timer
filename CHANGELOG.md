@@ -32,6 +32,13 @@
 - init mise
 - init cobra
 
+## v0.6.0 (2025-08-02)
+
+### Feat
+
+- **start**: allow program exit on esc
+- accept deadline
+
 ## v0.5.0 (2025-06-28)
 
 ### Feat
