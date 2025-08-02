@@ -44,7 +44,8 @@ func (m StartModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tick()
 
 	case tea.KeyMsg:
-		if msg.String() == "q" || msg.String() == "ctrl+c" {
+		switch msg.String() {
+		case "q", "ctrl+c", "esc":
 			return m, tea.Quit
 		}
 	}
