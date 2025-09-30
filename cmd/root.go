@@ -7,6 +7,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -76,24 +77,67 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.timer.toml)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $XDG_CONFIG_HOME/timer/config.toml)")
+}
+
+func getConfigPath() (string, error) {
+	if cfgFile != "" {
+		return cfgFile, nil
+	}
+
+	configHome := os.Getenv("XDG_CONFIG_HOME")
+	if configHome == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", err
+		}
+		configHome = filepath.Join(home, ".config")
+	}
+
+	configDir := filepath.Join(configHome, "timer")
+	configPath := filepath.Join(configDir, "config.toml")
+
+	return configPath, nil
+}
+
+func ensureConfigExists(configPath string) error {
+	if _, err := os.Stat(configPath); err == nil {
+		return nil
+	}
+
+	configDir := filepath.Dir(configPath)
+	if err := os.MkdirAll(configDir, 0o755); err != nil {
+		return err
+	}
+
+	file, err := os.Create(configPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString("# Timer CLI Configuration\n# Add your configuration options here\n")
+	return err
 }
 
 func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		viper.AddConfigPath(home)
-		viper.SetConfigType("toml")
-		viper.SetConfigName(".timer.toml")
+	configPath, err := getConfigPath()
+	if err != nil {
+		log.Printf("Warning: could not determine config path: %v", err)
+		return
 	}
 
+	// Ensure config file exists
+	if err := ensureConfigExists(configPath); err != nil {
+		log.Printf("Warning: could not create config file: %v", err)
+		return
+	}
+
+	viper.SetConfigFile(configPath)
+	viper.SetConfigType("toml")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		panic(err)
+		log.Printf("Warning: could not read config file: %v", err)
 	}
 }
