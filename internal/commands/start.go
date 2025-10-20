@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/gen2brain/beeep"
 )
 
 type tickMsg time.Time
@@ -54,6 +55,8 @@ func (m StartModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m StartModel) View() string {
 	if m.done {
+		beeep.Notify("Your Timer is Complete!", "Your timer is completed!", "")
+
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
 			lipgloss.NewStyle().
 				Bold(true).
