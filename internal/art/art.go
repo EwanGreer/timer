@@ -1,8 +1,8 @@
-package commands
+package art
 
 import "strings"
 
-const doneArt = `
+const DoneArt = `
 ██████   ██████  ███    ██ ███████ 
 ██   ██ ██    ██ ████   ██ ██      
 ██   ██ ██    ██ ██ ██  ██ █████   
@@ -10,7 +10,7 @@ const doneArt = `
 ██████   ██████  ██   ████ ███████ 
 `
 
-var bigDigits = map[rune]string{
+var BigDigits = map[rune]string{
 	'0': `
  ███ 
 █   █
@@ -89,14 +89,14 @@ var bigDigits = map[rune]string{
      `,
 }
 
-func renderBigClock(timeStr string) string {
+func RenderBigClock(timeStr string) string {
 	const glyphHeight = 5
 	lines := make([]string, glyphHeight)
 
 	for _, ch := range timeStr {
-		glyph, ok := bigDigits[ch]
+		glyph, ok := BigDigits[ch]
 		if !ok {
-			glyph = bigDigits['0'] // fallback to '0' or blank
+			glyph = BigDigits['0'] // fallback to '0' or blank
 		}
 
 		glyphLines := strings.Split(strings.Trim(glyph, "\n"), "\n")

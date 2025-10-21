@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/EwanGreer/timer/internal/art"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gen2brain/beeep"
@@ -61,7 +62,7 @@ func (m StartModel) View() string {
 			lipgloss.NewStyle().
 				Bold(true).
 				Foreground(lipgloss.Color("10")).
-				Render(doneArt),
+				Render(art.DoneArt),
 		)
 	}
 
@@ -71,12 +72,12 @@ func (m StartModel) View() string {
 
 	bigStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("12")).
-		Render(renderBigClock(timeStr))
+		Render(art.RenderBigClock(timeStr))
 
 	if m.Remaining < time.Second*60 {
 		bigStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("13")).
-			Render(renderBigClock(timeStr))
+			Render(art.RenderBigClock(timeStr))
 	}
 
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, bigStyle)
