@@ -32,6 +32,17 @@
 - init mise
 - init cobra
 
+## v0.7.0 (2025-10-22)
+
+### Feat
+
+- desktop notifications
+- **config**: make better
+
+### Refactor
+
+- move art to its own package
+
 ## v0.6.0 (2025-08-02)
 
 ### Feat
