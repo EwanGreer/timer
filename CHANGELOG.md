@@ -1,3 +1,9 @@
+## v0.7.1 (2026-08-23)
+
+### Fix
+
+- fire completion notification once
+
 ## v0.7.0 (2026-08-23)
 
 ### Feat
