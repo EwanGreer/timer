@@ -11,10 +11,22 @@ import (
 
 type tickMsg time.Time
 
+// notify is the desktop notification function. It is a variable so tests can
+// stub it.
+var notify = beeep.Notify
+
 func tick() tea.Cmd {
 	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
 		return tickMsg(t)
 	})
+}
+
+// notifyDone sends the completion notification once.
+func notifyDone() tea.Cmd {
+	return func() tea.Msg {
+		notify("Your Timer is Complete!", "Your timer is completed!", "")
+		return nil
+	}
 }
 
 type StartModel struct {
@@ -39,7 +51,7 @@ func (m StartModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		if m.Remaining <= 0 {
 			m.done = true
-			return m, nil
+			return m, notifyDone()
 		}
 		m.Remaining -= time.Second
 		return m, tick()
@@ -55,8 +67,6 @@ func (m StartModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m StartModel) View() string {
 	if m.done {
-		beeep.Notify("Your Timer is Complete!", "Your timer is completed!", "")
-
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
 			lipgloss.NewStyle().
 				Bold(true).
