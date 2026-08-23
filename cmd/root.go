@@ -143,6 +143,22 @@ func getArtDir() (string, error) {
 	return filepath.Join(filepath.Dir(configPath), "art"), nil
 }
 
+func getRunningDir() (string, error) {
+	configPath, err := getConfigPath()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(filepath.Dir(configPath), "running"), nil
+}
+
+func getLogPath() (string, error) {
+	configPath, err := getConfigPath()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(filepath.Dir(configPath), "timer.log"), nil
+}
+
 // loadArt loads the art set from the art directory, logging any warnings
 // about unusable art files.
 func loadArt() *art.Set {
