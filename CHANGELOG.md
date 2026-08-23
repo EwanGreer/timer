@@ -1,3 +1,10 @@
+## v0.8.0 (2026-08-23)
+
+### Feat
+
+- load timer art from art dir with embedded fallback
+- add --name flag for named timers
+
 ## v0.7.1 (2026-08-23)
 
 ### Fix
