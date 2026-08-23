@@ -5,34 +5,43 @@ import (
 	"time"
 )
 
+// notifyRecord captures the arguments of the most recent notification.
+type notifyRecord struct {
+	calls   int
+	title   string
+	message string
+}
+
 // stubNotify replaces the package notify function for the duration of a test.
-func stubNotify(t *testing.T) *int {
+func stubNotify(t *testing.T) *notifyRecord {
 	t.Helper()
 
-	calls := 0
+	var rec notifyRecord
 	orig := notify
 	notify = func(title, message string, icon any) error {
-		calls++
+		rec.calls++
+		rec.title = title
+		rec.message = message
 		return nil
 	}
 	t.Cleanup(func() { notify = orig })
 
-	return &calls
+	return &rec
 }
 
 func TestStartModelViewDoesNotFireNotification(t *testing.T) {
-	calls := stubNotify(t)
+	rec := stubNotify(t)
 
 	m := StartModel{done: true}
 	_ = m.View()
 
-	if *calls != 0 {
-		t.Fatalf("View fired %d notifications, want 0", *calls)
+	if rec.calls != 0 {
+		t.Fatalf("View fired %d notifications, want 0", rec.calls)
 	}
 }
 
 func TestStartModelUpdateFiresNotificationOnceOnDone(t *testing.T) {
-	calls := stubNotify(t)
+	rec := stubNotify(t)
 
 	m := StartModel{Remaining: 0}
 	_, cmd := m.Update(tickMsg(time.Now()))
@@ -41,7 +50,37 @@ func TestStartModelUpdateFiresNotificationOnceOnDone(t *testing.T) {
 	}
 	cmd()
 
-	if *calls != 1 {
-		t.Fatalf("notification fired %d times, want 1", *calls)
+	if rec.calls != 1 {
+		t.Fatalf("notification fired %d times, want 1", rec.calls)
+	}
+}
+
+func TestStartModelUpdateNotificationIncludesName(t *testing.T) {
+	rec := stubNotify(t)
+
+	m := StartModel{Remaining: 0, Name: "Tea"}
+	_, cmd := m.Update(tickMsg(time.Now()))
+	cmd()
+
+	if rec.calls != 1 {
+		t.Fatalf("notification fired %d times, want 1", rec.calls)
+	}
+	if rec.title != "Your Timer is Complete!" {
+		t.Errorf("title = %q, want %q", rec.title, "Your Timer is Complete!")
+	}
+	if rec.message != `Your timer "Tea" is completed!` {
+		t.Errorf("message = %q, want %q", rec.message, `Your timer "Tea" is completed!`)
+	}
+}
+
+func TestStartModelUpdateNotificationWithoutNameKeepsDefaultMessage(t *testing.T) {
+	rec := stubNotify(t)
+
+	m := StartModel{Remaining: 0}
+	_, cmd := m.Update(tickMsg(time.Now()))
+	cmd()
+
+	if rec.message != "Your timer is completed!" {
+		t.Errorf("message = %q, want %q", rec.message, "Your timer is completed!")
 	}
 }

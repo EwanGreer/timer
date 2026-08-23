@@ -22,15 +22,20 @@ func tick() tea.Cmd {
 }
 
 // notifyDone sends the completion notification once.
-func notifyDone() tea.Cmd {
+func (m StartModel) notifyDone() tea.Cmd {
 	return func() tea.Msg {
-		notify("Your Timer is Complete!", "Your timer is completed!", "")
+		message := "Your timer is completed!"
+		if m.Name != "" {
+			message = fmt.Sprintf(`Your timer "%s" is completed!`, m.Name)
+		}
+		notify("Your Timer is Complete!", message, "")
 		return nil
 	}
 }
 
 type StartModel struct {
 	Remaining time.Duration
+	Name      string
 	width     int
 	height    int
 	running   bool
@@ -51,7 +56,7 @@ func (m StartModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tickMsg:
 		if m.Remaining <= 0 {
 			m.done = true
-			return m, notifyDone()
+			return m, m.notifyDone()
 		}
 		m.Remaining -= time.Second
 		return m, tick()

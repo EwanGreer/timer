@@ -19,4 +19,10 @@ Timer automatically creates a configuration file on first run at:
 You can also specify a custom config file location with the `-c` flag:
 ```bash
 timer -c /path/to/config.toml 5m
-``` 
+```
+
+You can name a timer with the `-n` flag. The name appears in the completion notification:
+```bash
+timer -n Tea 5m
+```
+

@@ -16,6 +16,7 @@ import (
 )
 
 var cfgFile string
+var timerName string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -57,7 +58,7 @@ Provide a duration or a deadline
 			duration = d
 		}
 
-		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration}, tea.WithAltScreen()).Run(); err != nil {
+		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration, Name: timerName}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
 	},
@@ -75,6 +76,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $XDG_CONFIG_HOME/timer/config.toml)")
+	rootCmd.PersistentFlags().StringVarP(&timerName, "name", "n", "", "name for the timer, shown in the completion notification")
 }
 
 func getConfigPath() (string, error) {

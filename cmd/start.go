@@ -49,7 +49,7 @@ Provide a duration or a deadline
 			duration = d
 		}
 
-		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration}, tea.WithAltScreen()).Run(); err != nil {
+		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration, Name: timerName}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
 	},

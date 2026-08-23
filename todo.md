@@ -56,7 +56,7 @@
 - [ ] **Add hours to display** - Currently only shows MM:SS format
 - [ ] **Support multiple time formats** - 12-hour time (3:30pm), relative time (in 5 minutes)
 - [ ] **Add timer presets** - Save commonly used timer durations
-- [ ] **Add labels/names to timers** - "Pomodoro", "Tea", "Meeting", etc.
+- [x] **Add labels/names to timers** - "Pomodoro", "Tea", "Meeting", etc.
 
 ## Features - Advanced
 
