@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/EwanGreer/timer/internal/art"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -12,6 +13,7 @@ type StopWatchModel struct {
 	width              int
 	height             int
 	StartTime          time.Time
+	Art                *art.Set
 	paused             bool
 	elapsedBeforePause time.Duration
 }
@@ -66,7 +68,7 @@ func (m StopWatchModel) View() string {
 
 	bigStyle := lipgloss.NewStyle().
 		Foreground(color).
-		Render(renderBigClock(timeStr))
+		Render(artFor(m.Art).RenderClock(timeStr))
 
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, bigStyle)
 }

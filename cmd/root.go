@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/EwanGreer/timer/internal/art"
 	"github.com/EwanGreer/timer/internal/commands"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/fang"
@@ -58,7 +59,7 @@ Provide a duration or a deadline
 			duration = d
 		}
 
-		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration, Name: timerName}, tea.WithAltScreen()).Run(); err != nil {
+		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration, Name: timerName, Art: loadArt()}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
 	},
@@ -117,6 +118,30 @@ func ensureConfigExists(configPath string) error {
 
 	_, err = file.WriteString("# Timer CLI Configuration\n# Add your configuration options here\n")
 	return err
+}
+
+func getArtDir() (string, error) {
+	configPath, err := getConfigPath()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(filepath.Dir(configPath), "art"), nil
+}
+
+// loadArt loads the art set from the art directory, logging any warnings
+// about unusable art files.
+func loadArt() *art.Set {
+	dir, err := getArtDir()
+	if err != nil {
+		log.Printf("Warning: could not determine art directory: %v", err)
+		return art.Default()
+	}
+
+	s, warns := art.Load(dir)
+	for _, w := range warns {
+		log.Printf("Warning: %s", w)
+	}
+	return s
 }
 
 func initConfig() {

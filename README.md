@@ -26,3 +26,25 @@ You can name a timer with the `-n` flag. The name appears in the completion noti
 timer -n Tea 5m
 ```
 
+## Custom art
+
+The timer reads its display art from files at runtime, so you can customise it
+without rebuilding. Put art files in the `art` directory next to your config:
+
+- `$XDG_CONFIG_HOME/timer/art/` (if `XDG_CONFIG_HOME` is set)
+- `~/.config/timer/art/` (default)
+
+| File         | Used for                          |
+| ------------ | --------------------------------- |
+| `done.txt`   | The DONE art shown on completion  |
+| `0.txt`–`9.txt` | The big digit glyphs           |
+| `colon.txt`  | The `:` glyph in the clock        |
+
+Digit glyphs must be exactly 5 rows, with at least one non-blank row; a
+trailing newline after the last row is fine. Rows are padded to the widest
+glyph, so uneven widths still line up.
+
+Missing files silently fall back to the built-in art (embedded in the binary
+at build time). Files that exist but cannot be read or parsed also fall back,
+with a warning printed on startup.
+

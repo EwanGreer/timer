@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/EwanGreer/timer/internal/art"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/gen2brain/beeep"
@@ -36,6 +37,7 @@ func (m StartModel) notifyDone() tea.Cmd {
 type StartModel struct {
 	Remaining time.Duration
 	Name      string
+	Art       *art.Set
 	width     int
 	height    int
 	running   bool
@@ -71,12 +73,14 @@ func (m StartModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m StartModel) View() string {
+	s := artFor(m.Art)
+
 	if m.done {
 		return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center,
 			lipgloss.NewStyle().
 				Bold(true).
 				Foreground(lipgloss.Color("10")).
-				Render(doneArt),
+				Render(s.Done()),
 		)
 	}
 
@@ -86,12 +90,12 @@ func (m StartModel) View() string {
 
 	bigStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("12")).
-		Render(renderBigClock(timeStr))
+		Render(s.RenderClock(timeStr))
 
 	if m.Remaining < time.Second*60 {
 		bigStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("13")).
-			Render(renderBigClock(timeStr))
+			Render(s.RenderClock(timeStr))
 	}
 
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, bigStyle)

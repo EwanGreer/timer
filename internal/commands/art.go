@@ -1,109 +1,12 @@
 package commands
 
-import "strings"
+import "github.com/EwanGreer/timer/internal/art"
 
-const doneArt = `
-██████   ██████  ███    ██ ███████ 
-██   ██ ██    ██ ████   ██ ██      
-██   ██ ██    ██ ██ ██  ██ █████   
-██   ██ ██    ██ ██  ██ ██ ██      
-██████   ██████  ██   ████ ███████ 
-`
-
-var bigDigits = map[rune]string{
-	'0': `
- ███ 
-█   █
-█   █
-█   █
- ███ `,
-
-	'1': `
-  █  
- ██  
-  █  
-  █  
- ███ `,
-
-	'2': `
- ███ 
-    █
- ███ 
-█    
-█████`,
-
-	'3': `
-████ 
-    █
- ███ 
-    █
-████ `,
-
-	'4': `
-█  █ 
-█  █ 
-█████
-   █ 
-   █ `,
-
-	'5': `
-█████
-█    
-████ 
-    █
-████ `,
-
-	'6': `
- ███ 
-█    
-████ 
-█   █
- ███ `,
-
-	'7': `
-█████
-    █
-   █ 
-  █  
-  █  `,
-
-	'8': `
- ███ 
-█   █
- ███ 
-█   █
- ███ `,
-
-	'9': `
- ███ 
-█   █
- ████
-    █
- ███ `,
-
-	':': `
-     
-  ░  
-     
-  ░  
-     `,
-}
-
-func renderBigClock(timeStr string) string {
-	const glyphHeight = 5
-	lines := make([]string, glyphHeight)
-
-	for _, ch := range timeStr {
-		glyph, ok := bigDigits[ch]
-		if !ok {
-			glyph = bigDigits['0'] // fallback to '0' or blank
-		}
-
-		glyphLines := strings.Split(strings.Trim(glyph, "\n"), "\n")
-		for i := range glyphHeight {
-			lines[i] += glyphLines[i] + "  " // space between characters
-		}
+// artFor returns the model's art set, falling back to the built-in art when
+// none was provided.
+func artFor(s *art.Set) *art.Set {
+	if s == nil {
+		return art.Default()
 	}
-
-	return strings.Join(lines, "\n")
+	return s
 }

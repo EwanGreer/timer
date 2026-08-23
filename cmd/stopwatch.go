@@ -16,7 +16,7 @@ var stopwatchCmd = &cobra.Command{
 	Aliases: []string{"sw"},
 	Args:    cobra.ExactArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
-		if _, err := tea.NewProgram(commands.StopWatchModel{StartTime: time.Now()}, tea.WithAltScreen()).Run(); err != nil {
+		if _, err := tea.NewProgram(commands.StopWatchModel{StartTime: time.Now(), Art: loadArt()}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
 	},
