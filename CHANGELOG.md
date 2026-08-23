@@ -1,3 +1,20 @@
+## v0.9.0 (2026-08-24)
+
+### Feat
+
+- add ps command listing running timers
+- detached timer records itself in the registry and logs errors
+- add running dir and log path helpers
+- read registry with staleness cleanup via process start times
+- add registry write and remove for running timers
+- add --detach flag to run timers in the background
+
+### Fix
+
+- always print ps table header, even with no running timers
+- restore slog default in detach test and add pid to log lines
+- keep registry files when process checks unsupported
+
 ## v0.8.0 (2026-08-23)
 
 ### Feat
