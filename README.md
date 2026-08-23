@@ -39,6 +39,17 @@ Detached timers do not take over the terminal, and survive closing it.
 They cannot be cancelled — close a detached timer's notification and wait
 for it, or leave it out. `-d` is not supported on Windows.
 
+List running timers with `ps`:
+
+```bash
+timer ps
+ID    NAME  REMAINING  STARTED
+2491  Tea   3m24s      14:32
+```
+
+State files live in a `running/` directory next to your config. Errors
+from detached timers are appended to `timer.log` next to the config.
+
 ## Custom art
 
 The timer reads its display art from files at runtime, so you can customise it
