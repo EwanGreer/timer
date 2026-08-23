@@ -16,6 +16,8 @@ func defaultProcAlive(pid int) bool {
 	return unix.Kill(pid, 0) == nil
 }
 
+func init() { procChecksSupported = true }
+
 // defaultProcStartedAt returns the process start time from
 // /proc/<pid>/stat field 22 (starttime, clock ticks since boot) plus the
 // boot time from /proc/stat.

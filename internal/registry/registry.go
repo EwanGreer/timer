@@ -68,11 +68,17 @@ type Timer struct {
 var procAlive = defaultProcAlive
 var procStartedAt = defaultProcStartedAt
 
+// procChecksSupported reports whether the platform can verify process
+// liveness and start times. When false, Read cannot tell stale files
+// from live timers and keeps every file. Platform files set it in init.
+var procChecksSupported = false
+
 // startTimeTolerance is how far the recorded start may be from the
 // process start time.
 const startTimeTolerance = 2 * time.Second
 
-// Read returns the live timers in dir, removing stale files as it goes. A
+// Read returns the live timers in dir, removing stale files as it goes.
+// On platforms that cannot verify processes, no files are removed. A
 // missing directory yields an empty list.
 func Read(dir string) ([]Timer, error) {
 	entries, err := os.ReadDir(dir)
@@ -100,14 +106,16 @@ func Read(dir string) ([]Timer, error) {
 			removeStale(path)
 			continue
 		}
-		if !procAlive(pid) {
-			removeStale(path)
-			continue
-		}
-		start, err := procStartedAt(pid)
-		if err != nil || abs(start.Sub(rec.StartedAt)) > startTimeTolerance {
-			removeStale(path)
-			continue
+		if procChecksSupported {
+			if !procAlive(pid) {
+				removeStale(path)
+				continue
+			}
+			start, err := procStartedAt(pid)
+			if err != nil || abs(start.Sub(rec.StartedAt)) > startTimeTolerance {
+				removeStale(path)
+				continue
+			}
 		}
 		remaining := rec.StartedAt.Add(time.Duration(rec.DurationS) * time.Second).Sub(now)
 		if remaining < 0 {

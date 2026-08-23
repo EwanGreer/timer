@@ -194,6 +194,29 @@ func TestReadSortsOldestFirst(t *testing.T) {
 	}
 }
 
+func TestReadKeepsTimersWithoutProcSupport(t *testing.T) {
+	dir := t.TempDir()
+	if err := Write(dir, Entry{Name: "Tea", Duration: 5 * time.Minute, StartedAt: time.Now()}); err != nil {
+		t.Fatal(err)
+	}
+	stubProc(t, false, time.Now(), nil)
+	old := procChecksSupported
+	procChecksSupported = false
+	t.Cleanup(func() { procChecksSupported = old })
+
+	timers, err := Read(dir)
+	if err != nil {
+		t.Fatalf("Read: %v", err)
+	}
+	if len(timers) != 1 {
+		t.Fatalf("len = %d, want 1", len(timers))
+	}
+	matches, _ := filepath.Glob(filepath.Join(dir, "*.json"))
+	if len(matches) != 1 {
+		t.Fatalf("files after Read = %v, want 1", len(matches))
+	}
+}
+
 func TestDefaultProcStartedAtOwnProcess(t *testing.T) {
 	if runtime.GOOS != "darwin" && runtime.GOOS != "linux" {
 		t.Skip("process start time not supported on this platform")
