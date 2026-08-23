@@ -1,2 +1,4 @@
 bin
 *.db
+
+test/data/timer.log
