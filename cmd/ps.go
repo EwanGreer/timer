@@ -42,12 +42,9 @@ func formatRemaining(d time.Duration) string {
 	return fmt.Sprintf("%dm%02ds", m, s)
 }
 
-// renderTable writes the ps table for timers, or nothing when there are
-// none.
+// renderTable writes the ps table for timers. The header always prints,
+// even when there are none.
 func renderTable(w io.Writer, timers []registry.Timer) {
-	if len(timers) == 0 {
-		return
-	}
 	tw := tabwriter.NewWriter(w, 0, 8, 2, ' ', 0)
 	fmt.Fprintln(tw, "ID\tNAME\tREMAINING\tSTARTED")
 	for _, tm := range timers {

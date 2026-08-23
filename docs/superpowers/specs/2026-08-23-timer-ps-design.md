@@ -93,8 +93,7 @@ New `cmd/ps.go`:
   (recomputed: `started_at + duration − now`, formatted `3m24s`,
   `1h02m10s`), `STARTED` (`HH:MM` local time).
 - Oldest first; column-aligned with stdlib `tabwriter`.
-- Empty registry or missing `running/` dir: prints nothing, exit 0
-  (script-friendly).
+- Empty registry or missing `running/` dir: prints the header only, exit 0.
 - Errors (unreadable dir, not supported on Windows): message to stderr,
   exit 1.
 - The command is thin: it calls the registry through a stub-able package

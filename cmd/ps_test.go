@@ -50,8 +50,29 @@ func TestRenderTable(t *testing.T) {
 func TestRenderTableEmpty(t *testing.T) {
 	var out bytes.Buffer
 	renderTable(&out, nil)
-	if out.String() != "" {
-		t.Fatalf("table = %q, want empty", out.String())
+	if want := "ID  NAME  REMAINING  STARTED\n"; out.String() != want {
+		t.Fatalf("table = %q, want %q", out.String(), want)
+	}
+}
+
+func TestPsRunPrintsHeaderWithNoTimers(t *testing.T) {
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	var out bytes.Buffer
+	rootCmd.SetOut(&out)
+
+	orig := readTimers
+	readTimers = func(dir string) ([]registry.Timer, error) {
+		return nil, nil
+	}
+	t.Cleanup(func() { readTimers = orig })
+
+	rootCmd.SetArgs([]string{"ps"})
+	if err := rootCmd.Execute(); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+
+	if want := "ID  NAME  REMAINING  STARTED\n"; out.String() != want {
+		t.Fatalf("output = %q, want %q", out.String(), want)
 	}
 }
 
