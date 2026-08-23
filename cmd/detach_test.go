@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -228,5 +230,64 @@ func TestDetachFlagOnTimerCommandsButNotStopwatch(t *testing.T) {
 	err := rootCmd.Execute()
 	if err == nil || !strings.Contains(err.Error(), "-d") {
 		t.Fatalf("stopwatch -d error = %v, want a rejection mentioning -d", err)
+	}
+}
+
+func TestRunDetachedTimerRecordsAndRemovesRegistryEntry(t *testing.T) {
+	configHome := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", configHome)
+	runningDir := filepath.Join(configHome, "timer", "running")
+
+	var snap []string
+	orig := headlessRun
+	headlessRun = func(d time.Duration, name string) error {
+		snap, _ = filepath.Glob(filepath.Join(runningDir, "*.json"))
+		return nil
+	}
+	t.Cleanup(func() { headlessRun = orig })
+
+	runDetachedTimer(time.Minute, "Tea")
+
+	if len(snap) != 1 {
+		t.Fatalf("registry files during run = %v, want 1", snap)
+	}
+	wantFile := filepath.Join(runningDir, fmt.Sprintf("%d.json", os.Getpid()))
+	if snap[0] != wantFile {
+		t.Fatalf("registry file = %q, want %q", snap[0], wantFile)
+	}
+	matches, _ := filepath.Glob(filepath.Join(runningDir, "*.json"))
+	if len(matches) != 0 {
+		t.Fatalf("registry files after run = %v, want none", matches)
+	}
+}
+
+func TestRunDetachedTimerLogsRegistryWriteFailure(t *testing.T) {
+	configHome := t.TempDir()
+	t.Setenv("XDG_CONFIG_HOME", configHome)
+	// Make the running path uncreatable by placing a file where the
+	// directory should be, so registry.Write fails after the log file is
+	// already open.
+	if err := os.MkdirAll(filepath.Join(configHome, "timer"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(configHome, "timer", "running"), []byte("not a dir"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	orig := headlessRun
+	headlessRun = func(d time.Duration, name string) error { return nil }
+	t.Cleanup(func() { headlessRun = orig })
+
+	origSlog := slog.Default()
+	t.Cleanup(func() { slog.SetDefault(origSlog) })
+
+	runDetachedTimer(time.Minute, "Tea")
+
+	b, err := os.ReadFile(filepath.Join(configHome, "timer", "timer.log"))
+	if err != nil {
+		t.Fatalf("read timer.log: %v", err)
+	}
+	if !strings.Contains(string(b), "could not write registry entry") {
+		t.Fatalf("timer.log = %q, want a write failure entry", string(b))
 	}
 }
