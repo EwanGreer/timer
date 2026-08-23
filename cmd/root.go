@@ -20,7 +20,6 @@ var cfgFile string
 var timerName string
 var detach bool
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "timer [duration|deadline]",
 	Short: "start a timer",
@@ -79,8 +78,6 @@ Provide a duration or a deadline
 	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := fang.Execute(context.Background(), rootCmd); err != nil {
 		os.Exit(1)
@@ -159,8 +156,6 @@ func getLogPath() (string, error) {
 	return filepath.Join(filepath.Dir(configPath), "timer.log"), nil
 }
 
-// loadArt loads the art set from the art directory, logging any warnings
-// about unusable art files.
 func loadArt() *art.Set {
 	dir, err := getArtDir()
 	if err != nil {
@@ -182,7 +177,6 @@ func initConfig() {
 		return
 	}
 
-	// Ensure config file exists
 	if err := ensureConfigExists(configPath); err != nil {
 		log.Printf("Warning: could not create config file: %v", err)
 		return

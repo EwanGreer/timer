@@ -13,9 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// timerTestOutputEnv is set on the test binary when a spawn test wants the
-// re-executed child to report its env and args to a file instead of running
-// tests. Only TestMain in this file knows about it.
 const timerTestOutputEnv = "TIMER_TEST_CHILD_OUTPUT"
 
 // TestMain intercepts re-executed test binaries: when a spawn test launches
@@ -34,8 +31,8 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// resetTimerFlags clears the package-level flag vars for the duration of a
-// test, since Execute parses into them and they persist between tests.
+// resetTimerFlags restores the package-level flag vars after the test:
+// Execute parses into them and they persist between tests.
 func resetTimerFlags(t *testing.T) {
 	t.Helper()
 
@@ -44,13 +41,10 @@ func resetTimerFlags(t *testing.T) {
 	t.Cleanup(func() { timerName, detach = oldName, oldDetach })
 }
 
-// spawnRecord counts calls to spawnDetached.
 type spawnRecord struct {
 	calls int
 }
 
-// stubSpawn replaces the package spawnDetached function for the duration of
-// a test.
 func stubSpawn(t *testing.T) *spawnRecord {
 	t.Helper()
 

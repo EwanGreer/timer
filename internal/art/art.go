@@ -1,6 +1,3 @@
-// Package art renders the timer's ASCII art. Art is read at runtime from an
-// art directory so users can customise it, with built-in art embedded at
-// build time as a fallback.
 package art
 
 import (
@@ -18,29 +15,22 @@ var embedded embed.FS
 
 const glyphHeight = 5
 
-// Set holds the art used to render the timer display.
 type Set struct {
 	done      string
 	digits    map[rune]string
 	gridWidth int
 }
 
-// defaultSet is built from the embedded files and used whenever no art
-// directory provides overrides.
 var defaultSet = mustParseEmbedded()
 
-// Default returns the built-in art set.
 func Default() *Set {
 	return defaultSet
 }
 
-// Done returns the completion art.
 func (s *Set) Done() string {
 	return s.done
 }
 
-// RenderClock renders a time string like "12:34" using big digits.
-// Characters without a glyph render as the '0' glyph.
 func (s *Set) RenderClock(timeStr string) string {
 	lines := make([]string, glyphHeight)
 
@@ -52,7 +42,7 @@ func (s *Set) RenderClock(timeStr string) string {
 
 		glyphLines := strings.Split(glyph, "\n")
 		for i := range glyphHeight {
-			lines[i] += glyphLines[i] + "  " // space between characters
+			lines[i] += glyphLines[i] + "  "
 		}
 	}
 
@@ -90,9 +80,8 @@ func glyphFile(key rune) string {
 	return string(key) + ".txt"
 }
 
-// Load builds a Set from the art files in dir, falling back file by file to
-// the built-in art. A missing dir or missing files produce no warnings;
-// present but unusable files are reported in the returned warnings.
+// Load falls back file by file to the built-in art. Missing files are
+// intentionally silent; only present but unusable files warn.
 func Load(dir string) (*Set, []string) {
 	s := &Set{
 		done:      defaultSet.done,
@@ -146,8 +135,6 @@ func glyphKey(name string) rune {
 	return rune(name[0])
 }
 
-// parseGlyph validates glyph content: exactly glyphHeight rows, at least one
-// of them non-blank. A trailing newline after the last row is allowed.
 func parseGlyph(content string) (string, bool) {
 	lines := strings.Split(content, "\n")
 	if len(lines) == glyphHeight+1 && lines[glyphHeight] == "" {
@@ -164,8 +151,8 @@ func parseGlyph(content string) (string, bool) {
 	return "", false
 }
 
-// normalize pads every glyph to one shared grid width so glyphs of different
-// widths stay aligned when rendered side by side.
+// normalize pads glyphs to a shared width so glyphs of different widths
+// stay aligned side by side.
 func (s *Set) normalize() {
 	width := 0
 	for _, glyph := range s.digits {

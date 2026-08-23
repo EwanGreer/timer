@@ -60,7 +60,6 @@ func TestRemoveMissingFileIsNotAnError(t *testing.T) {
 	}
 }
 
-// stubProc replaces the proc checks for the duration of a test.
 func stubProc(t *testing.T, alive bool, start time.Time, startErr error) {
 	t.Helper()
 	oa, os_ := procAlive, procStartedAt

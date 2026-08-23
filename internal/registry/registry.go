@@ -1,5 +1,3 @@
-// Package registry tracks running detached timers as one JSON file per
-// timer in a running/ directory.
 package registry
 
 import (
@@ -13,22 +11,18 @@ import (
 	"time"
 )
 
-// Entry describes a timer to record.
 type Entry struct {
 	Name      string
 	Duration  time.Duration
 	StartedAt time.Time
 }
 
-// record is the on-disk JSON shape.
 type record struct {
 	Name      string    `json:"name"`
 	DurationS int64     `json:"duration_seconds"`
 	StartedAt time.Time `json:"started_at"`
 }
 
-// Write records the timer as <os.Getpid()>.json in dir, atomically via a
-// temp file and rename.
 func Write(dir string, e Entry) error {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
@@ -45,8 +39,6 @@ func Write(dir string, e Entry) error {
 	return os.Rename(tmp, filepath.Join(dir, fmt.Sprintf("%d.json", os.Getpid())))
 }
 
-// Remove deletes the registry file for pid. A missing file is not an
-// error.
 func Remove(dir string, pid int) error {
 	err := os.Remove(filepath.Join(dir, fmt.Sprintf("%d.json", pid)))
 	if os.IsNotExist(err) {
@@ -55,7 +47,6 @@ func Remove(dir string, pid int) error {
 	return err
 }
 
-// Timer is a live timer as read from the registry.
 type Timer struct {
 	Pid       int
 	Name      string
@@ -68,18 +59,12 @@ type Timer struct {
 var procAlive = defaultProcAlive
 var procStartedAt = defaultProcStartedAt
 
-// procChecksSupported reports whether the platform can verify process
-// liveness and start times. When false, Read cannot tell stale files
-// from live timers and keeps every file. Platform files set it in init.
+// procChecksSupported is set in init by the platform files. When it stays
+// false, Read cannot tell stale files from live timers and keeps every file.
 var procChecksSupported = false
 
-// startTimeTolerance is how far the recorded start may be from the
-// process start time.
 const startTimeTolerance = 2 * time.Second
 
-// Read returns the live timers in dir, removing stale files as it goes.
-// On platforms that cannot verify processes, no files are removed. A
-// missing directory yields an empty list.
 func Read(dir string) ([]Timer, error) {
 	entries, err := os.ReadDir(dir)
 	if os.IsNotExist(err) {
@@ -145,8 +130,7 @@ func readRecord(path string) (record, error) {
 	return rec, err
 }
 
-// removeStale drops a registry file whose timer is gone; failures are
-// ignored (the next Read retries).
+// Failures are ignored; the next Read retries the removal.
 func removeStale(path string) {
 	os.Remove(path)
 }

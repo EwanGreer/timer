@@ -5,14 +5,12 @@ import (
 	"time"
 )
 
-// notifyRecord captures the arguments of the most recent notification.
 type notifyRecord struct {
 	calls   int
 	title   string
 	message string
 }
 
-// stubNotify replaces the package notify function for the duration of a test.
 func stubNotify(t *testing.T) *notifyRecord {
 	t.Helper()
 

@@ -4,8 +4,7 @@ package cmd
 
 import "errors"
 
-// spawnDetachedImpl reports that detaching is not supported on Windows, so
-// the module still builds there.
+// This stub keeps the module building on Windows.
 func spawnDetachedImpl(args []string) error {
 	return errors.New("--detach is not supported on Windows")
 }

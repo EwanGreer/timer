@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-// resetCfgFile clears the package-level config flag for the duration of a
-// test.
 func resetCfgFile(t *testing.T) {
 	t.Helper()
 

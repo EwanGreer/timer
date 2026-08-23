@@ -12,8 +12,7 @@ import (
 
 type tickMsg time.Time
 
-// notify is the desktop notification function. It is a variable so tests can
-// stub it.
+// notify is a variable so tests can stub it.
 var notify = beeep.Notify
 
 func tick() tea.Cmd {
@@ -22,8 +21,6 @@ func tick() tea.Cmd {
 	})
 }
 
-// NotifyComplete sends the completion notification for a timer with the
-// given name.
 func NotifyComplete(name string) error {
 	message := "Your timer is completed!"
 	if name != "" {
@@ -32,7 +29,6 @@ func NotifyComplete(name string) error {
 	return notify("Your Timer is Complete!", message, "")
 }
 
-// notifyDone sends the completion notification once.
 func (m StartModel) notifyDone() tea.Cmd {
 	return func() tea.Msg {
 		NotifyComplete(m.Name)

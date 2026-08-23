@@ -10,10 +10,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// readTimers is the registry read. It is a variable so tests can stub it.
+// readTimers is a variable so tests can stub it.
 var readTimers = registry.Read
 
-// psCmd lists running timers.
 var psCmd = &cobra.Command{
 	Use:     "ps",
 	Short:   "list running timers",
@@ -26,8 +25,6 @@ func init() {
 	rootCmd.AddCommand(psCmd)
 }
 
-// formatRemaining renders a duration the way the ps table shows it:
-// 45s, 3m24s, 1h02m10s.
 func formatRemaining(d time.Duration) string {
 	d = d.Round(time.Second)
 	if d < time.Minute {
@@ -42,8 +39,6 @@ func formatRemaining(d time.Duration) string {
 	return fmt.Sprintf("%dm%02ds", m, s)
 }
 
-// renderTable writes the ps table for timers. The header always prints,
-// even when there are none.
 func renderTable(w io.Writer, timers []registry.Timer) {
 	tw := tabwriter.NewWriter(w, 0, 8, 2, ' ', 0)
 	fmt.Fprintln(tw, "ID\tNAME\tREMAINING\tSTARTED")
