@@ -1,3 +1,19 @@
+## v0.7.0 (2026-08-23)
+
+### Feat
+
+- desktop notifications
+- config: make better (auto-create XDG config file)
+
+### Docs
+
+- readme updates
+
+### Chore
+
+- rm copyright comments
+- update license
+
 ## 0.4.0 (2025-06-26)
 
 ### Feat
