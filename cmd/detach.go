@@ -41,20 +41,20 @@ func runDetachedTimer(d time.Duration, name string) {
 
 	dir, err := getRunningDir()
 	if err != nil {
-		slog.Error("could not determine running dir", "err", err)
+		slog.Error("could not determine running dir", "err", err, "pid", os.Getpid())
 		if nerr := headlessRun(d, name); nerr != nil {
-			slog.Error("completion notification failed", "err", nerr)
+			slog.Error("completion notification failed", "err", nerr, "pid", os.Getpid())
 		}
 		return
 	}
 	if werr := registry.Write(dir, registry.Entry{Name: name, Duration: d, StartedAt: time.Now()}); werr != nil {
-		slog.Error("could not write registry entry", "err", werr)
+		slog.Error("could not write registry entry", "err", werr, "pid", os.Getpid())
 	}
 	if nerr := headlessRun(d, name); nerr != nil {
-		slog.Error("completion notification failed", "err", nerr)
+		slog.Error("completion notification failed", "err", nerr, "pid", os.Getpid())
 	}
 	if rerr := registry.Remove(dir, os.Getpid()); rerr != nil {
-		slog.Error("could not remove registry entry", "err", rerr)
+		slog.Error("could not remove registry entry", "err", rerr, "pid", os.Getpid())
 	}
 }
 

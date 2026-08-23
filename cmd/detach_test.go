@@ -246,6 +246,9 @@ func TestRunDetachedTimerRecordsAndRemovesRegistryEntry(t *testing.T) {
 	}
 	t.Cleanup(func() { headlessRun = orig })
 
+	origSlog := slog.Default()
+	t.Cleanup(func() { slog.SetDefault(origSlog) })
+
 	runDetachedTimer(time.Minute, "Tea")
 
 	if len(snap) != 1 {
