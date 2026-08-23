@@ -18,6 +18,7 @@ import (
 
 var cfgFile string
 var timerName string
+var detach bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -59,6 +60,19 @@ Provide a duration or a deadline
 			duration = d
 		}
 
+		if os.Getenv(detachedChildEnv) != "" {
+			runDetached(duration, timerName)
+			return
+		}
+
+		if detach {
+			if err := spawnDetached(detachedChildArgs(os.Args[1:])); err != nil {
+				log.Panicf("could not detach timer: %s", err.Error())
+			}
+			cmd.Println(confirmationLine(inputStr, timerName))
+			return
+		}
+
 		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration, Name: timerName, Art: loadArt()}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
@@ -78,6 +92,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $XDG_CONFIG_HOME/timer/config.toml)")
 	rootCmd.PersistentFlags().StringVarP(&timerName, "name", "n", "", "name for the timer, shown in the completion notification")
+	rootCmd.Flags().BoolVarP(&detach, "detach", "d", false, "run the timer in the background, returning the prompt immediately")
 }
 
 func getConfigPath() (string, error) {

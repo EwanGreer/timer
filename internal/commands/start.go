@@ -22,14 +22,20 @@ func tick() tea.Cmd {
 	})
 }
 
+// NotifyComplete sends the completion notification for a timer with the
+// given name.
+func NotifyComplete(name string) error {
+	message := "Your timer is completed!"
+	if name != "" {
+		message = fmt.Sprintf(`Your timer "%s" is completed!`, name)
+	}
+	return notify("Your Timer is Complete!", message, "")
+}
+
 // notifyDone sends the completion notification once.
 func (m StartModel) notifyDone() tea.Cmd {
 	return func() tea.Msg {
-		message := "Your timer is completed!"
-		if m.Name != "" {
-			message = fmt.Sprintf(`Your timer "%s" is completed!`, m.Name)
-		}
-		notify("Your Timer is Complete!", message, "")
+		NotifyComplete(m.Name)
 		return nil
 	}
 }

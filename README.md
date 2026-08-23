@@ -26,6 +26,19 @@ You can name a timer with the `-n` flag. The name appears in the completion noti
 timer -n Tea 5m
 ```
 
+## Detached timers
+
+Run a timer in the background with the `-d` flag. The prompt returns
+immediately and the completion notification still fires:
+```bash
+timer -d -n Tea 5m
+timer "Tea" started — will notify on completion
+```
+
+Detached timers do not take over the terminal, and survive closing it.
+They cannot be cancelled — close a detached timer's notification and wait
+for it, or leave it out. `-d` is not supported on Windows.
+
 ## Custom art
 
 The timer reads its display art from files at runtime, so you can customise it

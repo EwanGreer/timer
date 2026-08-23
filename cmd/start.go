@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -49,6 +50,19 @@ Provide a duration or a deadline
 			duration = d
 		}
 
+		if os.Getenv(detachedChildEnv) != "" {
+			runDetached(duration, timerName)
+			return
+		}
+
+		if detach {
+			if err := spawnDetached(detachedChildArgs(os.Args[1:])); err != nil {
+				log.Panicf("could not detach timer: %s", err.Error())
+			}
+			cmd.Println(confirmationLine(inputStr, timerName))
+			return
+		}
+
 		if _, err := tea.NewProgram(commands.StartModel{Remaining: duration, Name: timerName, Art: loadArt()}, tea.WithAltScreen()).Run(); err != nil {
 			panic(err)
 		}
@@ -57,4 +71,5 @@ Provide a duration or a deadline
 
 func init() {
 	rootCmd.AddCommand(startCmd)
+	startCmd.Flags().BoolVarP(&detach, "detach", "d", false, "run the timer in the background, returning the prompt immediately")
 }
