@@ -2,10 +2,12 @@ package registry
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 )
@@ -57,6 +59,54 @@ func TestRemoveDeletesFile(t *testing.T) {
 func TestRemoveMissingFileIsNotAnError(t *testing.T) {
 	if err := Remove(t.TempDir(), 9999); err != nil {
 		t.Fatalf("Remove: %v", err)
+	}
+}
+
+func stubTerminate(t *testing.T, err error) *[]int {
+	t.Helper()
+	var got []int
+	orig := terminate
+	terminate = func(pid int) error {
+		got = append(got, pid)
+		return err
+	}
+	t.Cleanup(func() { terminate = orig })
+	return &got
+}
+
+func TestStopSignalsPidAndRemovesFile(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "4242.json"), []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	signalled := stubTerminate(t, nil)
+
+	if err := Stop(dir, 4242); err != nil {
+		t.Fatalf("Stop: %v", err)
+	}
+
+	if len(*signalled) != 1 || (*signalled)[0] != 4242 {
+		t.Fatalf("terminate received %v, want [4242]", *signalled)
+	}
+	if _, err := os.Stat(filepath.Join(dir, "4242.json")); !os.IsNotExist(err) {
+		t.Fatalf("file still exists after Stop (stat err = %v)", err)
+	}
+}
+
+func TestStopKeepsFileWhenSignalFails(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "4242.json")
+	if err := os.WriteFile(path, []byte("{}"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	stubTerminate(t, errors.New("no such process"))
+
+	err := Stop(dir, 4242)
+	if err == nil || !strings.Contains(err.Error(), "no such process") {
+		t.Fatalf("Stop error = %v, want an error mentioning no such process", err)
+	}
+	if _, statErr := os.Stat(path); statErr != nil {
+		t.Fatalf("file removed after a failed signal (stat err = %v)", statErr)
 	}
 }
 

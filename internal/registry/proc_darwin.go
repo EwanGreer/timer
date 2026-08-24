@@ -14,6 +14,10 @@ func defaultProcAlive(pid int) bool {
 
 func init() { procChecksSupported = true }
 
+func defaultTerminate(pid int) error {
+	return unix.Kill(pid, unix.SIGTERM)
+}
+
 func defaultProcStartedAt(pid int) (time.Time, error) {
 	kp, err := unix.SysctlKinfoProc("kern.proc.pid", pid)
 	if err != nil {

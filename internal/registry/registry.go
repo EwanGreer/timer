@@ -47,6 +47,13 @@ func Remove(dir string, pid int) error {
 	return err
 }
 
+func Stop(dir string, pid int) error {
+	if err := terminate(pid); err != nil {
+		return err
+	}
+	return Remove(dir, pid)
+}
+
 type Timer struct {
 	Pid       int
 	Name      string
@@ -55,9 +62,10 @@ type Timer struct {
 	Remaining time.Duration
 }
 
-// procAlive and procStartedAt are variables so tests can stub them.
+// procAlive, procStartedAt and terminate are variables so tests can stub them.
 var procAlive = defaultProcAlive
 var procStartedAt = defaultProcStartedAt
+var terminate = defaultTerminate
 
 // procChecksSupported is set in init by the platform files. When it stays
 // false, Read cannot tell stale files from live timers and keeps every file.
