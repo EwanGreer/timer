@@ -1,3 +1,10 @@
+## v0.10.0 (2026-08-24)
+
+### Feat
+
+- add stop command for detached timers
+- add registry stop that signals a timer and removes its file
+
 ## v0.9.0 (2026-08-24)
 
 ### Feat
