@@ -36,8 +36,7 @@ timer "Tea" started — will notify on completion
 ```
 
 Detached timers do not take over the terminal, and survive closing it.
-They cannot be cancelled — close a detached timer's notification and wait
-for it, or leave it out. `-d` is not supported on Windows.
+`-d` is not supported on Windows.
 
 List running timers with `ps`:
 
@@ -46,6 +45,25 @@ timer ps
 ID    NAME  REMAINING  STARTED
 2491  Tea   3m24s      14:32
 ```
+
+Stop a running timer with `stop`, before it completes. Give one or more
+IDs from the `ps` table:
+
+```bash
+timer stop 2491
+stopped timer "Tea" (2491)
+```
+
+Use `--all` to stop every running timer:
+
+```bash
+timer stop --all
+stopped 2 timers
+```
+
+A stopped timer sends no notification. `stop` signals only a timer that
+`ps` lists, so it refuses an ID that is not a running timer. `stop` is
+not supported on Windows.
 
 State files live in a `running/` directory next to your config. Errors
 from detached timers are appended to `timer.log` next to the config.
