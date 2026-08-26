@@ -1,3 +1,13 @@
+## v0.11.0 (2026-08-27)
+
+### BREAKING CHANGE
+
+- timer builds only on macOS; Linux and Windows no longer compile.
+
+### Feat
+
+- drop Windows and Linux support
+
 ## v0.10.0 (2026-08-24)
 
 ### Feat
