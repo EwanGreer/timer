@@ -13,20 +13,17 @@ import (
 
 const detachedChildEnv = "TIMER_DETACHED_CHILD"
 
-// spawnDetached is a variable so tests can stub it.
-var spawnDetached = spawnDetachedImpl
-
-// headlessRun is a variable so tests can stub it.
-var headlessRun = commands.RunDetached
-
-// runDetached is a variable so tests can stub it.
-var runDetached = runDetachedTimer
+var (
+	spawnDetached = spawnDetachedImpl
+	headlessRun   = commands.RunDetached
+	runDetached   = runDetachedTimer
+)
 
 func runDetachedTimer(d time.Duration, name string) {
 	logPath, err := getLogPath()
 	if err == nil {
-		if f, ferr := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644); ferr == nil {
-			defer f.Close()
+		if f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644); err == nil {
+			defer func() { _ = f.Close() }()
 			slog.SetDefault(slog.New(slog.NewJSONHandler(f, &slog.HandlerOptions{Level: slog.LevelInfo, AddSource: true})))
 		}
 	}
@@ -34,19 +31,19 @@ func runDetachedTimer(d time.Duration, name string) {
 	dir, err := getRunningDir()
 	if err != nil {
 		slog.Error("could not determine running dir", "err", err, "pid", os.Getpid())
-		if nerr := headlessRun(d, name); nerr != nil {
-			slog.Error("completion notification failed", "err", nerr, "pid", os.Getpid())
+		if err := headlessRun(d, name); err != nil {
+			slog.Error("completion notification failed", "err", err, "pid", os.Getpid())
 		}
 		return
 	}
-	if werr := registry.Write(dir, registry.Entry{Name: name, Duration: d, StartedAt: time.Now()}); werr != nil {
-		slog.Error("could not write registry entry", "err", werr, "pid", os.Getpid())
+	if err := registry.Write(dir, registry.Entry{Name: name, Duration: d, StartedAt: time.Now()}); err != nil {
+		slog.Error("could not write registry entry", "err", err, "pid", os.Getpid())
 	}
-	if nerr := headlessRun(d, name); nerr != nil {
-		slog.Error("completion notification failed", "err", nerr, "pid", os.Getpid())
+	if err := headlessRun(d, name); err != nil {
+		slog.Error("completion notification failed", "err", err, "pid", os.Getpid())
 	}
-	if rerr := registry.Remove(dir, os.Getpid()); rerr != nil {
-		slog.Error("could not remove registry entry", "err", rerr, "pid", os.Getpid())
+	if err := registry.Remove(dir, os.Getpid()); err != nil {
+		slog.Error("could not remove registry entry", "err", err, "pid", os.Getpid())
 	}
 }
 

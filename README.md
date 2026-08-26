@@ -1,6 +1,6 @@
 # Timer
 
-A simple timer.
+A simple timer for macOS.
 
 ## Installation
 
@@ -36,7 +36,6 @@ timer "Tea" started — will notify on completion
 ```
 
 Detached timers do not take over the terminal, and survive closing it.
-`-d` is not supported on Windows.
 
 List running timers with `ps`:
 
@@ -62,8 +61,7 @@ stopped 2 timers
 ```
 
 A stopped timer sends no notification. `stop` signals only a timer that
-`ps` lists, so it refuses an ID that is not a running timer. `stop` is
-not supported on Windows.
+`ps` lists, so it refuses an ID that is not a running timer.
 
 State files live in a `running/` directory next to your config. Errors
 from detached timers are appended to `timer.log` next to the config.

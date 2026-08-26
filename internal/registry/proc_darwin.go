@@ -12,8 +12,6 @@ func defaultProcAlive(pid int) bool {
 	return unix.Kill(pid, 0) == nil
 }
 
-func init() { procChecksSupported = true }
-
 func defaultTerminate(pid int) error {
 	return unix.Kill(pid, unix.SIGTERM)
 }

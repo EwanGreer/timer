@@ -67,10 +67,6 @@ var procAlive = defaultProcAlive
 var procStartedAt = defaultProcStartedAt
 var terminate = defaultTerminate
 
-// procChecksSupported is set in init by the platform files. When it stays
-// false, Read cannot tell stale files from live timers and keeps every file.
-var procChecksSupported = false
-
 const startTimeTolerance = 2 * time.Second
 
 func Read(dir string) ([]Timer, error) {
@@ -99,16 +95,14 @@ func Read(dir string) ([]Timer, error) {
 			removeStale(path)
 			continue
 		}
-		if procChecksSupported {
-			if !procAlive(pid) {
-				removeStale(path)
-				continue
-			}
-			start, err := procStartedAt(pid)
-			if err != nil || abs(start.Sub(rec.StartedAt)) > startTimeTolerance {
-				removeStale(path)
-				continue
-			}
+		if !procAlive(pid) {
+			removeStale(path)
+			continue
+		}
+		start, err := procStartedAt(pid)
+		if err != nil || abs(start.Sub(rec.StartedAt)) > startTimeTolerance {
+			removeStale(path)
+			continue
 		}
 		remaining := rec.StartedAt.Add(time.Duration(rec.DurationS) * time.Second).Sub(now)
 		if remaining < 0 {

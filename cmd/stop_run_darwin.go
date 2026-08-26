@@ -1,5 +1,3 @@
-//go:build !windows
-
 package cmd
 
 import (
@@ -8,7 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func psRun(cmd *cobra.Command, args []string) error {
+func stopRun(cmd *cobra.Command, args []string) error {
+	if err := validateStopArgs(args, stopAll); err != nil {
+		return err
+	}
 	dir, err := getRunningDir()
 	if err != nil {
 		return fmt.Errorf("could not determine running dir: %w", err)
@@ -17,6 +18,8 @@ func psRun(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("could not list timers: %w", err)
 	}
-	renderTable(cmd.OutOrStdout(), timers)
-	return nil
+	if stopAll {
+		return stopEvery(cmd.OutOrStdout(), dir, timers)
+	}
+	return stopByID(cmd.OutOrStdout(), dir, timers, args)
 }
