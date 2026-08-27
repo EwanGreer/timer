@@ -1,3 +1,9 @@
+## v0.12.0 (2026-08-27)
+
+### Feat
+
+- stop accepts prefix ID matches
+
 ## v0.11.0 (2026-08-27)
 
 ### BREAKING CHANGE
