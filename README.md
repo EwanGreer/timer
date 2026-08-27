@@ -60,6 +60,10 @@ timer stop --all
 stopped 2 timers
 ```
 
+You can also give a prefix of an ID: `timer stop 249` stops timer 2491
+when that is the only running ID starting with `249`. If the prefix
+matches several timers, `stop` refuses and lists the candidates.
+
 A stopped timer sends no notification. `stop` signals only a timer that
 `ps` lists, so it refuses an ID that is not a running timer.
 

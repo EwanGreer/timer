@@ -254,6 +254,81 @@ func TestStopWithoutIDsOrAllReturnsError(t *testing.T) {
 	}
 }
 
+func TestStopPrefixStopsSingleMatchingTimer(t *testing.T) {
+	resetStopFlags(t)
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	stubTimers(t, []registry.Timer{{Pid: 2491, Name: "Tea"}, {Pid: 3412}})
+	rec := stubStop(t, nil)
+
+	out, err := runStop(t, "249")
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+
+	if !samePids(rec.pids, 2491) {
+		t.Fatalf("stopped pids = %v, want [2491]", rec.pids)
+	}
+	if want := "stopped timer \"Tea\" (2491)\n"; out != want {
+		t.Fatalf("output = %q, want %q", out, want)
+	}
+}
+
+func TestStopExactMatchWinsOverLongerPrefix(t *testing.T) {
+	resetStopFlags(t)
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	stubTimers(t, []registry.Timer{{Pid: 249, Name: "Short"}, {Pid: 2491, Name: "Tea"}})
+	rec := stubStop(t, nil)
+
+	out, err := runStop(t, "249")
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+
+	if !samePids(rec.pids, 249) {
+		t.Fatalf("stopped pids = %v, want [249]", rec.pids)
+	}
+	if want := "stopped timer \"Short\" (249)\n"; out != want {
+		t.Fatalf("output = %q, want %q", out, want)
+	}
+}
+
+func TestStopAmbiguousPrefixReturnsErrorAndStopsNothing(t *testing.T) {
+	resetStopFlags(t)
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	stubTimers(t, []registry.Timer{{Pid: 2491, Name: "Tea"}, {Pid: 2492, Name: "Toast"}})
+	rec := stubStop(t, nil)
+
+	out, err := runStop(t, "249")
+	if err == nil || !strings.Contains(err.Error(), "timer ID 249 matches 2491, 2492") {
+		t.Fatalf("error = %v, want an error listing both matches", err)
+	}
+	if len(rec.pids) != 0 {
+		t.Fatalf("stopped pids = %v, want none", rec.pids)
+	}
+	if out != "" {
+		t.Fatalf("output = %q, want nothing for an ambiguous ID", out)
+	}
+}
+
+func TestStopPrefixIgnoresLeadingZeros(t *testing.T) {
+	resetStopFlags(t)
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	stubTimers(t, []registry.Timer{{Pid: 2491, Name: "Tea"}})
+	rec := stubStop(t, nil)
+
+	out, err := runStop(t, "0249")
+	if err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
+
+	if !samePids(rec.pids, 2491) {
+		t.Fatalf("stopped pids = %v, want [2491]", rec.pids)
+	}
+	if want := "stopped timer \"Tea\" (2491)\n"; out != want {
+		t.Fatalf("output = %q, want %q", out, want)
+	}
+}
+
 func TestStopAllWithIDsReturnsError(t *testing.T) {
 	resetStopFlags(t)
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())

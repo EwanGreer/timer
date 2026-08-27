@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"strings"
 
 	"github.com/EwanGreer/timer/internal/registry"
 	"github.com/spf13/cobra"
@@ -57,17 +58,41 @@ func stopByID(w io.Writer, dir string, timers []registry.Timer, args []string) e
 		}
 		tm, ok := byPid[pid]
 		if !ok {
-			errs = append(errs, fmt.Errorf("no running timer with ID %d", pid))
-			continue
+			tm, err = matchByPrefix(timers, pid)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
 		}
-		if err := stopTimer(dir, pid); err != nil {
-			errs = append(errs, fmt.Errorf("could not stop timer %d: %w", pid, err))
+		if err := stopTimer(dir, tm.Pid); err != nil {
+			errs = append(errs, fmt.Errorf("could not stop timer %d: %w", tm.Pid, err))
 			continue
 		}
 		fmt.Fprintln(w, stopLine(tm))
 	}
 
 	return errors.Join(errs...)
+}
+
+func matchByPrefix(timers []registry.Timer, pid int) (registry.Timer, error) {
+	prefix := strconv.Itoa(pid)
+	var matches []registry.Timer
+	for _, tm := range timers {
+		if strings.HasPrefix(strconv.Itoa(tm.Pid), prefix) {
+			matches = append(matches, tm)
+		}
+	}
+	switch len(matches) {
+	case 0:
+		return registry.Timer{}, fmt.Errorf("no running timer with ID %d", pid)
+	case 1:
+		return matches[0], nil
+	}
+	pids := make([]string, len(matches))
+	for i, tm := range matches {
+		pids[i] = strconv.Itoa(tm.Pid)
+	}
+	return registry.Timer{}, fmt.Errorf("timer ID %d matches %s — be more specific", pid, strings.Join(pids, ", "))
 }
 
 func stopEvery(w io.Writer, dir string, timers []registry.Timer) error {
