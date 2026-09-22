@@ -11,10 +11,10 @@ import (
 	"github.com/EwanGreer/timer/internal/registry"
 )
 
-const detachedChildEnv = "TIMER_DETACHED_CHILD"
+const detachedChildEnvKey = "TIMER_DETACHED_CHILD"
 
 var (
-	spawnDetached = spawnDetachedImpl
+	spawnDetached = spawnDetachedTimer
 	headlessRun   = commands.RunDetached
 	runDetached   = runDetachedTimer
 )
@@ -36,12 +36,15 @@ func runDetachedTimer(d time.Duration, name string) {
 		}
 		return
 	}
+
 	if err := registry.Write(dir, registry.Entry{Name: name, Duration: d, StartedAt: time.Now()}); err != nil {
 		slog.Error("could not write registry entry", "err", err, "pid", os.Getpid())
 	}
+
 	if err := headlessRun(d, name); err != nil {
 		slog.Error("completion notification failed", "err", err, "pid", os.Getpid())
 	}
+
 	if err := registry.Remove(dir, os.Getpid()); err != nil {
 		slog.Error("could not remove registry entry", "err", err, "pid", os.Getpid())
 	}

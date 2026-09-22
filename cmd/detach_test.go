@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	if out := os.Getenv(timerTestOutputEnv); out != "" {
 		f, err := os.Create(out)
 		if err == nil {
-			f.WriteString("child_env=" + os.Getenv(detachedChildEnv) + "\n")
+			f.WriteString("child_env=" + os.Getenv(detachedChildEnvKey) + "\n")
 			f.WriteString("child_args=" + strings.Join(os.Args[1:], " ") + "\n")
 			f.Close()
 		}
@@ -157,7 +157,7 @@ func TestDetachSpawnsChildAndPrintsUnnamedConfirmation(t *testing.T) {
 func TestDetachedChildEnvRunsHeadlessWithoutSpawn(t *testing.T) {
 	resetTimerFlags(t)
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
-	t.Setenv(detachedChildEnv, "1")
+	t.Setenv(detachedChildEnvKey, "1")
 	rec := stubSpawn(t)
 
 	var gotD time.Duration

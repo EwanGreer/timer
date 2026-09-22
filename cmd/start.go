@@ -49,7 +49,7 @@ Provide a duration or a deadline
 			duration = d
 		}
 
-		if os.Getenv(detachedChildEnv) != "" {
+		if os.Getenv(detachedChildEnvKey) != "" {
 			runDetached(duration, timerName)
 			return
 		}
